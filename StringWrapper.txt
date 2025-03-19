@@ -1,0 +1,20 @@
+package com.example.financial;
+
+public class StringWrapper {
+    private String value;
+
+    // Constructor
+    public StringWrapper(String value) {
+        this.value = value;
+    }
+
+    // Getter
+    public String getValue() {
+        return value;
+    }
+
+    // Setter
+    public void setValue(String value) {
+        this.value = value;
+    }
+}

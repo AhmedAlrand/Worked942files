@@ -1,0 +1,39 @@
+package com.example.financial;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class InventoryItem {
+    private final int productId;
+    private final int warehouseId;
+    private final double quantity;
+    private String unit; // Now mutable for dropdown
+    private final String invoiceId;
+    private final String productName; // New
+    private final List<String> unitOptions; // New
+
+    public InventoryItem(int productId, int warehouseId, double quantity, String unit, String invoiceId, String productName, List<String> unitOptions) {
+        this.productId = productId;
+        this.warehouseId = warehouseId;
+        this.quantity = quantity;
+        this.unit = unit != null ? unit : "Unknown";
+        this.invoiceId = invoiceId;
+        this.productName = productName != null ? productName : "Unknown";
+        this.unitOptions = unitOptions != null ? unitOptions : new ArrayList<>();
+    }
+
+    public int getProductId() { return productId; }
+    public int getWarehouseId() { return warehouseId; }
+    public double getQuantity() { return quantity; }
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit ; }
+    public String getInvoiceId() { return invoiceId; }
+    public String getProductName() { return productName; }
+    public List<String> getUnitOptions() { return unitOptions; }
+
+    @Override
+    public String toString() {
+        return "Product ID: " + productId + " - " + productName + ", Warehouse ID: " + warehouseId + 
+               ", Quantity: " + quantity + " " + unit;
+    }
+}

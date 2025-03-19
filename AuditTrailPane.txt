@@ -1,0 +1,90 @@
+package com.example.financial;
+
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+
+public class AuditTrailPane extends VBox {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditTrailPane.class);
+    private ResourceBundle messages; // Changed from final to non-final
+    private final DatabaseService dbService;
+    private final AuditService auditService;
+    private TableView<AuditEntry> auditTable;
+
+    public AuditTrailPane(ResourceBundle messages, DatabaseService dbService, AuditService auditService) {
+        this.messages = messages;
+        this.dbService = dbService;
+        this.auditService = auditService;
+        initializeUI();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initializeUI() {
+        setSpacing(10);
+        setPadding(new javafx.geometry.Insets(10));
+
+        auditTable = new TableView<>();
+        TableColumn<AuditEntry, String> timestampCol = new TableColumn<>(messages.getString("timestamp"));
+        timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+        TableColumn<AuditEntry, String> userCol = new TableColumn<>(messages.getString("user"));
+        userCol.setCellValueFactory(new PropertyValueFactory<>("user"));
+        TableColumn<AuditEntry, String> tableNameCol = new TableColumn<>(messages.getString("tableName"));
+        tableNameCol.setCellValueFactory(new PropertyValueFactory<>("tableName"));
+        TableColumn<AuditEntry, String> recordIdCol = new TableColumn<>(messages.getString("recordId"));
+        recordIdCol.setCellValueFactory(new PropertyValueFactory<>("recordId"));
+        TableColumn<AuditEntry, String> actionCol = new TableColumn<>(messages.getString("action"));
+        actionCol.setCellValueFactory(new PropertyValueFactory<>("action"));
+        TableColumn<AuditEntry, String> oldValueCol = new TableColumn<>(messages.getString("oldValue"));
+        oldValueCol.setCellValueFactory(new PropertyValueFactory<>("oldValue"));
+        TableColumn<AuditEntry, String> newValueCol = new TableColumn<>(messages.getString("newValue"));
+        newValueCol.setCellValueFactory(new PropertyValueFactory<>("newValue"));
+        auditTable.getColumns().addAll((TableColumn<AuditEntry, ?>[]) new TableColumn[] {timestampCol, userCol, tableNameCol, recordIdCol, actionCol, oldValueCol, newValueCol});
+        auditTable.setPrefHeight(400);
+        auditTable.setPlaceholder(new Label(messages.getString("noAuditLogsAvailable")));
+
+        getChildren().add(auditTable);
+    }
+
+    public void refreshLanguage(ResourceBundle newMessages) {
+        this.messages = newMessages;
+        auditTable.getColumns().get(0).setText(messages.getString("timestamp"));
+        auditTable.getColumns().get(1).setText(messages.getString("user"));
+        auditTable.getColumns().get(2).setText(messages.getString("tableName"));
+        auditTable.getColumns().get(3).setText(messages.getString("recordId"));
+        auditTable.getColumns().get(4).setText(messages.getString("action"));
+        auditTable.getColumns().get(5).setText(messages.getString("oldValue"));
+        auditTable.getColumns().get(6).setText(messages.getString("newValue"));
+        auditTable.setPlaceholder(new Label(messages.getString("noAuditLogsAvailable")));
+    }
+
+    public void loadAuditTrail() {
+        CompletableFuture.runAsync(() -> {
+            try {
+                LOGGER.info("Loading audit logs...");
+                List<AuditEntry> logs = dbService.getAuditLogs(1, 100);
+                LOGGER.info("Loaded {} audit logs", logs.size());
+                javafx.application.Platform.runLater(() -> {
+                    auditTable.getItems().clear();
+                    if (logs.isEmpty()) {
+                        LOGGER.info("No audit logs found");
+                    } else {
+                        auditTable.getItems().addAll(logs);
+                    }
+                });
+            } catch (DatabaseException e) {
+                LOGGER.error("Failed to load audit trail", e);
+                javafx.application.Platform.runLater(() -> 
+                    new Alert(Alert.AlertType.ERROR, messages.getString("failedToLoadAuditTrail") + ": " + e.getMessage()).showAndWait());
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error loading audit trail", e);
+                javafx.application.Platform.runLater(() -> 
+                    new Alert(Alert.AlertType.ERROR, messages.getString("unexpectedError") + ": " + e.getMessage()).showAndWait());
+            }
+        }, FinancialManagementApp.executor);
+    }
+}
