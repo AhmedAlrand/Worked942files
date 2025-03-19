@@ -1,0 +1,372 @@
+# English translations
+title=Financial Management
+dashboard=Dashboard
+invoices=Invoices
+recurringInvoices=Recurring Invoices
+inventory=Inventory
+attachments=Attachments
+customersSuppliers=Customers & Suppliers
+expenses=Expenses
+reports=Reports
+adjustments=Adjustments
+auditTrail=Audit Trail
+statusReady=Ready
+statusProcessing=Processing
+newInvoice=New Invoice
+markPayment=Mark Payment
+markPaymentReceived=Mark Payment Received
+database=Database
+changeDatabase=Change Database
+newDatabase=New Database
+enterNewDbName=Enter new database name
+dbConfigTitle=Database Configuration
+dbUrl=Database URL
+dbUsername=Username
+dbPassword=Password
+connect=Connect
+dbConfigUpdated=Database configuration updated
+dbCreated=Database created
+errorCreatingDb=Error creating database
+customerDetails=Customer Details
+customer=Customer
+customerName=Name
+customerContact=Contact
+customerEmail=Email
+customerAddress=Address
+invoiceDetails=Invoice Details
+invoiceId=Invoice ID
+invoiceType=Invoice Type
+date=Date
+paymentTerm=Payment Term
+paymentInstructions=Payment Instructions
+currency=Currency
+paymentCurrency=Payment Currency
+status=Status
+logoPath=Logo Path
+lineItems=Line Items
+totals=Totals
+shippingCharge=Shipping Charge
+invoiceDiscount=Invoice Discount (%)
+invoiceFixedDiscount=Fixed Discount
+invoiceTaxRate=Invoice Tax Rate (%)
+totalTax=Total Tax
+totalAmount=Total Amount
+customFields=Custom Fields
+addCustomField=Add Custom Field
+notes=Notes
+recurringInvoice=Recurring Invoice
+isRecurring=Is Recurring?
+frequencyType=Frequency Type
+frequencyInterval=Interval
+nextDate=Next Date
+endDate=End Date
+comments=Comments
+addComment=Add Comment
+save=Save
+addLineItem=Add Line Item
+exportToPdf=Export to PDF
+print=Print
+loadTemplate=Load Template
+saveTemplate=Save Template
+uploadAttachment=Upload Attachment
+batchProcess=Batch Process
+importInvoices=Import Invoices
+exportInvoices=Export Invoices
+setReminder=Set Reminder
+search=Search
+statusFilter=Status Filter
+startDate=Start Date
+endDate=End Date
+overduePayments=Overdue Payments
+overduePaymentsTitle=Overdue Payments Warning
+addRecurring=Add Recurring Invoice
+addInventory=Add Inventory
+productId=Product ID
+warehouseId=Warehouse ID
+quantity=Quantity
+transactionType=Transaction Type
+transactionId=Transaction ID
+upload=Upload
+download=Download
+loadAttachments=Load Attachments
+addCustomer=Add New Customer
+addSupplier=Add New Supplier
+supplierName=Supplier Name
+supplierContact=Supplier Contact
+supplierEmail=Supplier Email
+supplierAddress=Supplier Address
+addExpense=Add Expense
+category=Category
+budgetAmount=Budget Amount
+budgetStartDate=Budget Start Date
+budgetEndDate=Budget End Date
+setBudget=Set Budget
+reportType=Report Type
+generate=Generate
+type=Type
+description=Description
+amount=Amount
+accountFrom=From Account
+accountTo=To Account
+exchangeRate=Exchange Rate
+addAdjustment=Add Adjustment
+timePeriod=Time Period
+totalSales=Total Sales
+overdueAmount=Overdue Amount
+cashBalance=Cash Balance
+topCustomer=Top Customer
+totalTax=Total Tax
+importPurchase=Import Purchase
+addAttachment=Add Attachment
+viewAttachment=View Attachment
+searchAttachments=Search Attachments
+name=Name
+contactInfo=Contact Info
+nameRequired=Name is required
+customerAdded=Customer added
+failedToAddCustomer=Failed to add customer
+supplierAdded=Supplier added
+failedToAddSupplier=Failed to add supplier
+themeLight=Light
+themeDark=Dark
+langEnglish=English
+langArabic=Arabic
+addCustomerButton=Add Customer
+addSupplierButton=Add Supplier
+enterCustomerName=Enter customer or supplier name
+# ContactsPane keys (English)
+contactType=Contact Type
+searchContact=Search Contact
+typeToSearch=Type to search (e.g., Cust)
+contacts=Contacts
+activityInvoicesPayments=Activity (Invoices/Payments)
+status=Status
+balance=Balance
+addCustomer=Add Customer
+addNewCustomer=Add New Customer
+enterCustomerDetails=Enter Customer Details
+name=Name
+contactInfo=Contact Info
+customerAdded=Customer added
+failedToAddCustomer=Failed to add customer
+addSupplier=Add Supplier
+addNewSupplier=Add New Supplier
+enterSupplierDetails=Enter Supplier Details
+supplierAdded=Supplier added
+failedToAddSupplier=Failed to add supplier
+invalidContactId=Invalid contact ID
+noActivityFound=No activity found
+owesUs=Owes Us
+weOwe=We Owe
+failedToLoadActivity=Failed to load activity
+details=Details
+na=N/A
+noDetailsFoundForInvoice=No details found for invoice
+errorLoadingDetails=Error loading details
+paymentId=Payment ID
+pleaseSelectContact=Please select a contact first
+customers=Customers
+suppliers=Suppliers
+id=ID
+supplier=Supplier
+# InvoicePane keys (English)
+invoiceId=Invoice ID
+invoiceType=Invoice Type
+customer=Customer
+supplier=Supplier
+date=Date
+totalAmount=Total Amount
+currency=Currency
+exchangeRate=Exchange Rate
+paymentInstructions=Payment Instructions
+paymentTerm=Payment Term
+notes=Notes
+shippingCharge=Shipping Charge
+transportingFee=Transporting Fee
+uploadingFee=Uploading Fee
+taxFee=Tax Fee
+productId=Product ID
+warehouseId=Warehouse ID
+quantity=Quantity
+unit=Unit
+originalUnitPrice=Original Unit Price
+adjustedUnitPrice=Adjusted Unit Price
+discount=Discount
+totalPrice=Total Price
+product=Product
+selectProductFirst=Select Product First
+unitPrice=Unit Price
+addLineItem=Add Line Item
+deleteItem=Delete Item
+editItem=Edit Item
+newInvoice=New Invoice
+save=Save
+browseInvoices=Browse Invoices
+deleteInvoice=Delete Invoice
+print=Print
+exportToPdf=Export to PDF
+addAttachment=Add Attachment
+viewAttachment=View Attachment
+notYetSaved=Not yet saved
+transportingFee=Transporting Fee
+lastGenerated=Last Generated
+customerId=Customer ID
+# InventoryPane keys (English)
+productId=Product ID
+warehouseId=Warehouse ID
+quantity=Quantity
+unit=Unit
+customerId=Customer ID
+customerName=Customer Name
+addInventory=Add Inventory
+refresh=Refresh
+addAttachment=Add Attachment
+viewAttachment=View Attachment
+selectProductFirst=Select Product First
+invalidProduct=Invalid Product
+pleaseSelectProduct=Please select a product
+invalidInputNumbers=Invalid input: Please enter valid numbers
+failedToAdjustInventory=Failed to adjust inventory
+pleaseEnterProductWarehouse=Please enter Product and Warehouse ID
+failedToReadFile=Failed to read file
+failedToAddAttachment=Failed to add attachment
+attachmentAdded=Attachment added
+attachmentsForInventory=Attachments for Inventory
+id=ID
+fileName=File Name
+sizeBytes=Size (Bytes)
+uploadDate=Upload Date
+download=Download
+edit=Edit
+noAttachmentsFound=No attachments found
+selectAttachmentToDownload=Select an attachment to download
+selectAttachmentToEdit=Select an attachment to edit
+failedToLoadInventory=Failed to load inventory
+saveAttachment=Save Attachment
+attachmentSavedTo=Attachment saved to
+failedToDownloadAttachment=Failed to download attachment
+replaceAttachment=Replace Attachment
+attachmentUpdated=Attachment updated
+failedToUpdateAttachment=Failed to update attachment
+financialSummary=Financial Summary
+# ReportPane keys (English)
+reportType=Report Type
+financialSummary=Financial Summary
+cashFlow=Cash Flow
+balanceSheet=Balance Sheet
+profitLoss=Profit & Loss
+agingReport=Aging Report
+salesByCustomer=Sales by Customer
+salesByProduct=Sales by Product
+taxReport=Tax Report
+cashFlowProjection=Cash Flow Projection
+budgetVsActual=Budget vs Actual
+cashFlowForecast=Cash Flow Forecast
+startDate=Start Date
+endDate=End Date
+generate=Generate
+pleaseSelectDates=Please select start and end dates
+report=Report
+to=to
+invoiceId=Invoice ID
+customer=Customer
+amount=Amount
+daysOverdue=Days Overdue
+unknownReportType=Unknown report type
+failedToGenerateReport=Failed to generate report
+timestamp=Timestamp
+# AuditTrailPane keys (English)
+timestamp=Timestamp
+user=User
+tableName=Table Name
+recordId=Record ID
+action=Action
+oldValue=Old Value
+newValue=New Value
+noAuditLogsAvailable=No audit logs available
+failedToLoadAuditTrail=Failed to load audit trail
+unexpectedError=Unexpected error
+# InventoryPane new product keys (English)
+addNewProduct=Add New Product
+enterNewProductDetails=Enter New Product Details
+pleaseEnterProductName=Please enter a product name
+productAddedSuccessfully=Product added successfully
+failedToAddProduct=Failed to add product
+# Add New Product Dialog
+addNewProduct=Add New Product
+enterNewProductDetails=Enter details for the new product
+
+# Field Labels
+product=Product Name
+warehouseId=Warehouse ID
+quantity=Quantity
+unit=Unit
+
+# Units Section
+unitsSection=Units (select one as base, factor = 1)
+addUnit=Add Unit
+removeUnit=Remove
+
+# Validation Messages
+pleaseEnterProductName=Please enter a product name.
+pleaseSelectQuantityUnit=Please select a unit for the quantity.
+pleaseSelectBaseUnit=Please select a base unit.
+quantityUnitNotFound=Selected quantity unit not found in defined units.
+invalidInputNumbers=Invalid input: Please enter valid numbers.
+
+# Success Message
+productAddedSuccessfully=Product added successfully
+
+
+# New unit keys
+unit.piece=Piece
+unit.box=Box
+unit.carton=Carton
+unit.woodbox=Wood Box
+unit.roll=Roll
+unit.set=Set
+
+pleaseEnterWarehouseId=Please enter a warehouse ID.
+pleaseEnterQuantity=Please enter a quantity.
+pleaseSelectUnit=Please select a unit.
+
+invoiceSaved=Invoice saved successfully!
+invoiceUpdated=Invoice updated successfully!
+
+productName=Product Name
+
+unknown=Unknown Product
+
+invalidTotalAmount=Total amount must be greater than zero
+failedToSaveInvoice=Failed to save invoice
+invoiceSaved=Invoice saved successfully
+
+currentBalance=Current Balance
+newBalance=New Balance
+paymentRequired=Amount and currency are required
+
+invalidNumericInput=Invalid numeric input
+
+invalidExchangeRate=Invalid exchange rate
+
+invalidNumericInput=Invalid numeric input
+
+totalBalance=Total Balance
+displayCurrency=Display Currency
+
+failedToLoadContacts=Failed to load contacts
+
+save=Save
+close=Close
+invalidNumericInput=Invalid numeric input
+
+saveInvoicePDF=Save Invoice as PDF
+
+
+attachmentsForInvoice=Attachments for Invoice
+
+view=View
+selectAttachmentToView=Please select an attachment to view
+
+fromDate=From:
+toDate=To:

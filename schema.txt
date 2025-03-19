@@ -1,0 +1,181 @@
+-- Customers and Suppliers
+CREATE TABLE IF NOT EXISTS Customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contactInfo VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Suppliers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contactInfo VARCHAR(255)
+);
+
+-- Products and Units
+CREATE TABLE IF NOT EXISTS Products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ProductUnits (
+    productId INT,
+    unit VARCHAR(50),
+    factor DOUBLE NOT NULL, -- Conversion factor relative to base unit (piece)
+    PRIMARY KEY (productId, unit),
+    FOREIGN KEY (productId) REFERENCES Products(id)
+);
+
+-- Invoices and Line Items
+CREATE TABLE IF NOT EXISTS Invoices (
+    invoiceId VARCHAR(36) PRIMARY KEY,
+    customerId INT,
+    supplierId INT,
+    invoiceType VARCHAR(50),
+    date VARCHAR(10),
+    totalAmount DOUBLE,
+    taxAmount DOUBLE,
+    currency VARCHAR(3),
+    status VARCHAR(20),
+    paymentInstructions VARCHAR(255),
+    paymentTerm VARCHAR(20),
+    notes TEXT,
+    exchangeRate DOUBLE,
+    shippingFee DOUBLE,
+    transportingFee DOUBLE,
+    uploadingFee DOUBLE,
+    taxFee DOUBLE,
+    FOREIGN KEY (customerId) REFERENCES Customers(id),
+    FOREIGN KEY (supplierId) REFERENCES Suppliers(id)
+);
+
+CREATE TABLE IF NOT EXISTS InvoiceLineItems (
+    lineItemId INT AUTO_INCREMENT PRIMARY KEY,
+    invoiceId VARCHAR(36) NOT NULL,
+    productId INT NOT NULL,
+    warehouseId INT NOT NULL,
+    quantity DOUBLE NOT NULL,
+    unit VARCHAR(50),
+    unitPrice DOUBLE NOT NULL,
+    totalPrice DOUBLE NOT NULL,
+    paidAmount DOUBLE DEFAULT 0,
+    receivedAmount DOUBLE DEFAULT 0,
+    discount DOUBLE DEFAULT 0,
+    fixedDiscount DOUBLE DEFAULT 0,
+    taxRate DOUBLE DEFAULT 0,
+    totalTax DOUBLE DEFAULT 0,
+    currency VARCHAR(10) NOT NULL,
+    FOREIGN KEY (invoiceId) REFERENCES Invoices(invoiceId)
+);
+
+CREATE TABLE IF NOT EXISTS AuditLog (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    `user` VARCHAR(50),
+    tableName VARCHAR(50),
+    recordId VARCHAR(36),
+    action VARCHAR(255),
+    oldValue TEXT,
+    newValue TEXT,
+    timestamp TIMESTAMP
+);
+
+-- Payments
+CREATE TABLE IF NOT EXISTS Payments (
+    paymentId INT AUTO_INCREMENT PRIMARY KEY,
+    customerId INT,
+    supplierId INT,
+    amount DOUBLE NOT NULL,
+    currency VARCHAR(10) NOT NULL,
+    exchangeRate DOUBLE NOT NULL,
+    date VARCHAR(10),
+    status VARCHAR(20),
+    FOREIGN KEY (customerId) REFERENCES Customers(id),
+    FOREIGN KEY (supplierId) REFERENCES Suppliers(id)
+);
+
+CREATE TABLE IF NOT EXISTS Inventory (
+    productId INT,
+    warehouseId INT,
+    quantity DOUBLE NOT NULL, -- Changed from INT
+    unit VARCHAR(50),          -- Added for unit storage
+    customerId INT,            -- Nullable
+    customerName VARCHAR(255), -- Nullable
+    invoiceId VARCHAR(36),     -- Added for invoice reference
+    PRIMARY KEY (productId, warehouseId),
+    FOREIGN KEY (productId) REFERENCES Products(id),
+    FOREIGN KEY (invoiceId) REFERENCES Invoices(invoiceId) -- Optional, if linking to Invoices
+);
+
+-- Attachments
+CREATE TABLE IF NOT EXISTS Attachments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    entityType VARCHAR(50),
+    entityId VARCHAR(36),
+    contactId INT,
+    contactName VARCHAR(255),
+    fileName VARCHAR(255),
+    fileSize BIGINT,
+    uploadDate VARCHAR(10),
+    content BLOB
+);
+
+-- Expenses
+CREATE TABLE IF NOT EXISTS Expenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(255),
+    amount DOUBLE,
+    currency VARCHAR(3),
+    category VARCHAR(50),
+    date VARCHAR(10)
+);
+
+-- Budgets
+CREATE TABLE IF NOT EXISTS Budgets (
+    category VARCHAR(50) PRIMARY KEY,
+    amount DOUBLE,
+    startDate VARCHAR(10),
+    endDate VARCHAR(10)
+);
+
+-- Recurring Invoices
+CREATE TABLE IF NOT EXISTS RecurringInvoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoiceId VARCHAR(36),
+    frequencyType VARCHAR(20),
+    frequencyInterval INT,
+    nextDate VARCHAR(10),
+    endDate VARCHAR(10),
+    lastGenerated VARCHAR(10)
+);
+
+-- Adjustments
+CREATE TABLE IF NOT EXISTS Adjustments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(50),
+    description VARCHAR(255),
+    amount DOUBLE,
+    accountFrom INT,
+    accountTo INT,
+    date VARCHAR(10),
+    currency VARCHAR(3),
+    exchangeRate DOUBLE
+);
+
+-- Audit Logs
+CREATE TABLE IF NOT EXISTS AuditLogs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp VARCHAR(20),
+    userId VARCHAR(50),
+    entityType VARCHAR(50),
+    entityId VARCHAR(36),
+    action VARCHAR(50),
+    description TEXT
+);
+
+-- Sample Data (upserts to avoid duplicates, only for Products and AuditLogs)
+MERGE INTO Products KEY (id) VALUES (1, 'Product A');
+MERGE INTO Products KEY (id) VALUES (2, 'Product B');
+ALTER TABLE Products ALTER COLUMN id RESTART WITH 3; -- Correct H2 syntax
+MERGE INTO ProductUnits KEY (productId, unit) VALUES (1, 'piece', 1.0); -- Base unit
+MERGE INTO ProductUnits KEY (productId, unit) VALUES (2, 'box', 12.0); -- 1 box = 12 piec
+MERGE INTO AuditLogs KEY (id) VALUES (1, '2025-03-02 10:00:00', 'user', 'Test', '1', 'CREATE', 'Created test entry');
+MERGE INTO AuditLogs KEY (id) VALUES (2, '2025-03-02 11:00:00', 'user', 'Test', '2', 'UPDATE', 'Updated test entry');
