@@ -1,0 +1,250 @@
+package com.example.financial;
+
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+//import javafx.geometry.Priority;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.layout.Priority; // Correct import for Priority
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.MissingResourceException; // Added missing import
+
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+public class ContactsPane extends BorderPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContactsPane.class);
+    private final ResourceBundle messages;
+    private final DatabaseService dbService;
+    private final AuditService auditService;
+    private final ExchangeRateService exchangeRateService;
+    private ListView<String> contactList;
+    private TableView<Map.Entry<String, String>> activityTable;
+    private ObservableList<String> contactsObservableList;
+    private TextField searchField;
+
+    public ContactsPane(ResourceBundle messages, DatabaseService dbService, AuditService auditService, ExchangeRateService exchangeRateService) {
+        this.messages = messages;
+        this.dbService = dbService;
+        this.auditService = auditService;
+        this.exchangeRateService = exchangeRateService;
+        initializeUI();
+    }
+
+    private void initializeUI() {
+        setLeft(createContactListPane());
+        setCenter(createActivityPane());
+        getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+    }
+
+    private VBox createContactListPane() {
+        VBox contactListPane = new VBox(10);
+        contactListPane.setPadding(new Insets(10));
+        contactListPane.getStyleClass().add("contact-list-pane");
+
+        Label contactsLabel = new Label(messages.getString("contacts"));
+        contactsLabel.getStyleClass().add("section-label");
+
+        searchField = new TextField();
+        searchField.setPromptText(messages.getString("searchContacts"));
+        searchField.getStyleClass().add("search-field");
+        searchField.textProperty().addListener((obs, oldValue, newValue) -> searchContacts(newValue));
+
+        contactList = new ListView<>();
+        contactsObservableList = FXCollections.observableArrayList();
+        contactList.setItems(contactsObservableList);
+        contactList.getStyleClass().add("contact-list");
+        loadContacts();
+
+        contactList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                loadActivity();
+            }
+        });
+
+        contactList.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item);
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && !cell.isEmpty()) {
+                    ContextMenu contextMenu = createContextMenu(cell.getItem());
+                    contextMenu.show(cell, event.getScreenX(), event.getScreenY());
+                }
+            });
+            return cell;
+        });
+
+        VBox.setVgrow(contactList, Priority.ALWAYS);
+        contactListPane.getChildren().addAll(contactsLabel, searchField, contactList);
+        return contactListPane;
+    }
+
+    private ContextMenu createContextMenu(String contact) {
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem copyItem = new MenuItem(messages.getString("copy"));
+        copyItem.setOnAction(e -> copyToClipboard(contact));
+
+        MenuItem deleteItem = new MenuItem(messages.getString("delete"));
+        deleteItem.setOnAction(e -> {
+            try {
+                deleteContact(contact);
+            } catch (DatabaseException ex) {
+                LOGGER.error("Failed to delete contact: {}", contact, ex);
+                Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Failed to delete contact: " + ex.getMessage()).showAndWait());
+            }
+        });
+
+        contextMenu.getItems().addAll(copyItem, deleteItem);
+        return contextMenu;
+    }
+//=======================
+    private VBox createActivityPane() {
+    VBox activityPane = new VBox(10);
+    activityPane.setPadding(new Insets(10));
+    activityPane.getStyleClass().add("activity-pane");
+
+    String activityText;
+    try {
+        activityText = messages.getString("activity");
+    } catch (MissingResourceException e) {
+        activityText = "Activity";
+        LOGGER.warn("Resource key 'activity' not found, using default: {}", activityText);
+    }
+    Label activityLabel = new Label(activityText);
+    activityLabel.getStyleClass().add("section-label");
+
+    activityTable = new TableView<>();
+    activityTable.getStyleClass().add("activity-table");
+
+    TableColumn<Map.Entry<String, String>, String> keyColumn = new TableColumn<>(messages.getString("activityType"));
+    keyColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getKey()));
+
+    TableColumn<Map.Entry<String, String>, String> valueColumn = new TableColumn<>(messages.getString("details"));
+    valueColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue()));
+
+    activityTable.getColumns().addAll(keyColumn, valueColumn);
+    VBox.setVgrow(activityTable, Priority.ALWAYS);
+
+    activityPane.getChildren().addAll(activityLabel, activityTable);
+    return activityPane;
+}
+
+//======================
+    public void searchContacts(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            loadContacts();
+            return;
+        }
+        try {
+            List<String> customers = dbService.getCustomersWithNames();
+            List<String> suppliers = dbService.getSuppliersWithNames();
+            ObservableList<String> filteredContacts = FXCollections.observableArrayList();
+            String lowerQuery = query.toLowerCase();
+
+            for (String customer : customers) {
+                if (customer.toLowerCase().contains(lowerQuery)) {
+                    filteredContacts.add(customer);
+                }
+            }
+            for (String supplier : suppliers) {
+                if (supplier.toLowerCase().contains(lowerQuery)) {
+                    filteredContacts.add(supplier);
+                }
+            }
+            contactsObservableList.setAll(filteredContacts);
+        } catch (DatabaseException e) {
+            LOGGER.error("Failed to search contacts with query: {}", query, e);
+            Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Failed to search contacts: " + e.getMessage()).showAndWait());
+        }
+    }
+
+    private void loadContacts() {
+        try {
+            List<String> customers = dbService.getCustomersWithNames();
+            List<String> suppliers = dbService.getSuppliersWithNames();
+            contactsObservableList.clear();
+            contactsObservableList.addAll(customers);
+            contactsObservableList.addAll(suppliers);
+        } catch (DatabaseException e) {
+            LOGGER.error("Failed to load contacts", e);
+            Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Failed to load contacts: " + e.getMessage()).showAndWait());
+        }
+    }
+
+    public void loadActivity() {
+        String selectedContact = contactList.getSelectionModel().getSelectedItem();
+        if (selectedContact == null) return;
+
+        try {
+            int contactId = Integer.parseInt(selectedContact.split(" - ")[0]);
+            boolean isCustomer = dbService.getCustomersWithNames().contains(selectedContact);
+            List<Map<String, String>> activities = isCustomer ?
+                dbService.getCustomerActivity(contactId) : dbService.getSupplierActivity(contactId);
+
+            ObservableList<Map.Entry<String, String>> activityData = FXCollections.observableArrayList();
+            for (Map<String, String> activity : activities) {
+                for (Map.Entry<String, String> entry : activity.entrySet()) {
+                    activityData.add(entry);
+                }
+            }
+            activityTable.setItems(activityData);
+        } catch (NumberFormatException e) {
+            LOGGER.error("Invalid contact ID format: {}", selectedContact, e);
+            Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Invalid contact ID format").showAndWait());
+        } catch (DatabaseException e) {
+            LOGGER.error("Failed to load activity for contact: {}", selectedContact, e);
+            Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Failed to load activity: " + e.getMessage()).showAndWait());
+        }
+    }
+
+    private void copyToClipboard(String contact) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(contact);
+        clipboard.setContent(content);
+        LOGGER.info("Copied contact to clipboard: {}", contact);
+    }
+
+    private void deleteContact(String contact) throws DatabaseException {
+        int contactId = Integer.parseInt(contact.split(" - ")[0]);
+        boolean isCustomer = dbService.getCustomersWithNames().contains(contact);
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, messages.getString("confirmDeleteContact") + ": " + contact, ButtonType.YES, ButtonType.NO);
+        confirmation.showAndWait().filter(response -> response == ButtonType.YES).ifPresent(response -> {
+            try {
+                if (isCustomer) {
+                    dbService.deleteCustomer(contactId);
+                    auditService.logAction("unknown", "Customers", String.valueOf(contactId), "Deleted customer: " + contact, null, null);
+                } else {
+                    dbService.deleteSupplier(contactId);
+                    auditService.logAction("unknown", "Suppliers", String.valueOf(contactId), "Deleted supplier: " + contact, null, null);
+                }
+                loadContacts();
+                activityTable.getItems().clear();
+                LOGGER.info("Deleted contact: {}", contact);
+            } catch (DatabaseException e) {
+                LOGGER.error("Failed to delete contact: {}", contact, e);
+                Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, "Failed to delete contact: " + e.getMessage()).showAndWait());
+            }
+        });
+    }
+
+    public ListView<String> getContactList() {
+        return contactList;
+    }
+}
